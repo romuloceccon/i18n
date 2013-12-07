@@ -116,7 +116,11 @@ module I18n
           result = catch(:exception) do
             case subject
             when Symbol
-              I18n.translate(subject, options.merge(:locale => locale, :throw => true))
+              if options[:fallback]
+                translate(locale, subject, options)
+              else
+                I18n.translate(subject, options.merge(:locale => locale, :throw => true))
+              end
             when Proc
               date_or_time = options.delete(:object) || object
               resolve(locale, object, subject.call(date_or_time, options))
